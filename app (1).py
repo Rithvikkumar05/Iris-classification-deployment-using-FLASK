@@ -1,0 +1,104 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "d20724ef-87b2-4bd5-85d1-9af2d78935fd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from flask import Flask,request,jsonify,render_template\n",
+    "import pickle\n",
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1914383c-8e6d-4935-8421-09e43b460fea",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * Serving Flask app '__main__'\n",
+      " * Debug mode: on\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.\n",
+      " * Running on http://127.0.0.1:5000\n",
+      "Press CTRL+C to quit\n",
+      "127.0.0.1 - - [05/Jul/2024 19:58:15] \"GET / HTTP/1.1\" 200 -\n",
+      "127.0.0.1 - - [05/Jul/2024 19:58:15] \"GET /favicon.ico HTTP/1.1\" 404 -\n",
+      "E:\\program\\Lib\\site-packages\\sklearn\\base.py:439: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names\n",
+      "  warnings.warn(\n",
+      "127.0.0.1 - - [05/Jul/2024 20:00:15] \"POST /predict HTTP/1.1\" 200 -\n",
+      "E:\\program\\Lib\\site-packages\\sklearn\\base.py:439: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names\n",
+      "  warnings.warn(\n",
+      "127.0.0.1 - - [05/Jul/2024 20:01:25] \"POST /predict HTTP/1.1\" 200 -\n"
+     ]
+    }
+   ],
+   "source": [
+    "app = Flask(__name__)\n",
+    "model = pickle.load(open('iris_classifier.pkl','rb'))\n",
+    "iris_species = {0: 'setosa',1:'versiccolor',2:'virginica'}\n",
+    "@app.route('/')\n",
+    "def home():\n",
+    "    return render_template('iris.html')\n",
+    "@app.route('/predict',methods = ['POST'])\n",
+    "def predict():\n",
+    "    data = [float(x) for x in request.form.values()]\n",
+    "    features = [np.array(data)]\n",
+    "    prediction = model.predict(features)\n",
+    "    return jsonify({'prediction:':iris_species[(prediction[0])]})\n",
+    "if __name__ == '__main__':\n",
+    "    app.run(debug =True, use_reloader=False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1a5b3183-9ec9-4feb-ba24-f61df969a769",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%tb"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c99024d0-5443-483d-a51d-559978d181e5",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
